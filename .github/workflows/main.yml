@@ -1,0 +1,67 @@
+# Filename: .github/workflows/main.yml
+# This is a GitHub Actions workflow file that automates the build and deployment process
+# for a React application. It will run whenever a push is made to the 'main' branch.
+
+name: Deploy Portfolio App
+
+# This workflow will be triggered on a push event to the 'main' branch
+on:
+  push:
+    branches:
+      - main
+      - master
+
+# Define a single job named 'deploy'
+jobs:
+  deploy:
+    # The runner environment for this job. 'ubuntu-latest' is a great choice.
+    runs-on: ubuntu-latest
+
+    # A sequence of steps to be executed within the job
+    steps:
+      # Step 1: Check out the code from the repository
+      # This action checks out your repository under $GITHUB_WORKSPACE,
+      # so your workflow can access it.
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 2: Set up Node.js environment
+      # This action installs the specified version of Node.js
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18' # Use the version of Node.js you need
+
+      # Step 3: Install dependencies
+      # This step runs 'npm install' to get all the project dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Step 4: Run unit tests (Continuous Integration part)
+      # This step runs your test suite. If any tests fail, the workflow will stop here.
+      - name: Run tests
+        run: npm test -- --coverage --watchAll=false
+
+      # Step 5: Build the application for production
+      # This step creates a production-ready build of your application
+      - name: Build application
+        run: npm run build
+
+      # Step 6: Deploy to Vercel (Continuous Deployment part)
+      # This step uses the Vercel CLI to deploy the built application.
+      # The VERCEL_TOKEN and VERCEL_ORG_ID are stored as GitHub Secrets for security.
+      - name: Deploy to Vercel
+        # Uses the official Vercel GitHub Action
+        uses: amondnet/vercel-action@v20
+        with:
+          # The GitHub token is automatically provided
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # The Vercel token is a secret you must set in your GitHub repository settings
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          # The Vercel organization ID is a secret you must set in your GitHub repository settings
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          # The Vercel project ID is a secret you must set in your GitHub repository settings
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          # The build directory is where the output of 'npm run build' is located
+          # This may be different for your project (e.g., 'build' or 'dist')
+          vercel-project-path: './'

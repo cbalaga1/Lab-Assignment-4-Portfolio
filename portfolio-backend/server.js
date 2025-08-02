@@ -25,8 +25,8 @@ app.use(cors());
 // MongoDB Connection
 const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/portfolio_app';
 mongoose.connect(mongoURI)
-    .then(() => console.log('MongoDB connected successfully!'))
-    .catch(err => console.error('MongoDB connection error:', err));
+    .then(() => console.log('MongoDB connected successfully!'))
+    .catch(err => console.error('MongoDB connection error:', err));
 
 // Import authentication routes
 const authRoutes = require('./routes/authRoutes');
@@ -34,9 +34,28 @@ const authRoutes = require('./routes/authRoutes');
 // Use authentication routes
 app.use('/auth', authRoutes);
 
+// --- NEW CONTACT ROUTE ---
+// This route handles POST requests for the contact form
+app.post('/api/contact', (req, res) => {
+  const { name, email, message } = req.body;
+  
+  if (!name || !email || !message) {
+    return res.status(400).json({ message: 'All fields are required.' });
+  }
+
+  console.log('Received new contact submission:');
+  console.log('Name:', name);
+  console.log('Email:', email);
+  console.log('Message:', message);
+
+  // Send a success response back to the frontend
+  res.status(200).json({ message: 'Message received successfully.' });
+});
+// --- END OF NEW CONTACT ROUTE ---
+
 // Simple root route for testing
 app.get('/', (req, res) => {
-    res.send('Portfolio Backend API is running!');
+    res.send('Portfolio Backend API is running!');
 });
 
 // Define the port to listen on
@@ -44,5 +63,5 @@ const PORT = process.env.PORT || 3000;
 
 // Start the server
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
