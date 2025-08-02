@@ -1,5 +1,5 @@
 // Filename: portfolio-frontend/src/components/Contact.js
-// This component now sends form data to your backend API.
+// This component now sends form data to your LIVE backend API on Render.
 
 import React, { useState } from 'react';
 
@@ -24,7 +24,8 @@ function Contact() {
 
     try {
       // The endpoint for your backend API to handle contact form submissions
-      const response = await fetch('http://localhost:3000/api/contact', {
+      // This URL is now your LIVE Render backend URL
+      const response = await fetch('https://lab4-portfolio-backend.onrender.com/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
